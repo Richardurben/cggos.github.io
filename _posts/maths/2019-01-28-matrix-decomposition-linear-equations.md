@@ -129,6 +129,8 @@ $$
 
 ## Cholesky Decomposition
 
+* [Cholesky decomposition](https://rosettacode.org/wiki/Cholesky_decomposition)
+
 $$
 A = LDL^T
 $$
@@ -142,7 +144,13 @@ A = LL^T \\[2ex]
 A^{-1} = (L^T)^{-1} L^{-1} = (L^{-1})^T L^{-1}
 $$
 
+### LDLT
+
+* [LDLT for Checking Positive Semidefinite Matrix's Singularity](http://simbaforrest.github.io/blog/2016/03/25/LDLT-for-checking-positive-semidefinite-matrix-singularity.html)
+
 ## QR Decomposition
+
+* [QR decomposition](https://rosettacode.org/wiki/QR_decomposition)
 
 $$
 A = QR
@@ -152,6 +160,10 @@ $$
 
 
 # 线性方程组
+
+<div align=center>
+  <img src="../images/maths/matrix_function_solve.jpg">
+</div>
 
 ## 非齐次线性方程组
 
@@ -205,3 +217,19 @@ $$
 * 最小二乘解为 **矩阵 $A^TA$ 最小特征值所对应的特征向量**
 * $\text{EVD}(A^{T}A)=[V,D]$，找最小特征值对应的V中的特征向量
 * $\text{SVD}(A)=[U,S,V]$，找S中最小奇异值对应的V的右奇异向量
+
+
+# with Eigen
+
+* [Eigen 3.2稀疏矩阵入门](https://my.oschina.net/cvnote/blog/166980)
+
+* [Catalogue of dense decompositions](https://eigen.tuxfamily.org/dox/group__TopicLinearAlgebraDecompositions.html)
+
+* [Benchmark of dense decompositions](https://eigen.tuxfamily.org/dox/group__DenseDecompositionBenchmark.html)
+
+* [Solving linear least squares systems](https://eigen.tuxfamily.org/dox/group__LeastSquares.html)
+  - SVD decomposition (the most accurate but the slowest)
+  - QR decomposition
+  - normal equations (the fastest but least accurate)
+
+* [Solving Sparse Linear Systems](http://eigen.tuxfamily.org/dox/group__TopicSparseSystems.html)
