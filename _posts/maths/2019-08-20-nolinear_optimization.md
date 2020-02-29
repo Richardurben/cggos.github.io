@@ -2,7 +2,7 @@
 layout: post
 title:  "非线性优化"
 date:   2019-08-20
-categories: Math
+categories: Maths
 tags: []
 ---
 

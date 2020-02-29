@@ -2,7 +2,7 @@
 layout: post
 title:  "矩阵分解与线性方程组"
 date:   2019-01-28
-categories: Math
+categories: Maths
 tags: [Matrix, Least-squares Minimization]
 ---
 

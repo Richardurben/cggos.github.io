@@ -3,7 +3,7 @@ layout: post
 title:  "图像空间域分析之图像统计特征"
 date:   2018-11-30
 categories: ComputerVision
-tags: [Math, Image Process]
+tags: [Image Process]
 ---
 
 [TOC]

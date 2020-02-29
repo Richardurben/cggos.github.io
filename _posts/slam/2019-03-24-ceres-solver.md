@@ -3,7 +3,7 @@ layout: post
 title: "Ceres-Solver 从入门到上手视觉SLAM位姿优化问题"
 date: 2019-03-24
 categories: SLAM
-tags: [SLAM, Math]
+tags: [SLAM]
 ---
 
 [TOC]

@@ -3,7 +3,7 @@ layout: post
 title:  "图像频率域分析之傅里叶变换"
 date:   2018-12-01
 categories: ComputerVision
-tags: [Math, Image Process]
+tags: [Image Process]
 ---
 
 [TOC]
