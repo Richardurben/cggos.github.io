@@ -8,7 +8,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: GaoHongchen's Blog
-email: gaohongchen01@outlook.com
+email: cggos@outlook.com
 bio: 'Stay hungry,Stay foolish'
 description: "SLAM | Computer Vision | HPC"
 locale: utf-8

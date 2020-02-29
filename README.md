@@ -21,7 +21,7 @@ With the tutorial of w3school, I studied technology of Front End,which is as fol
 * install ruby-dev: `sudo apt install ruby2.3-dev`
 * install Jekyll: `sudo gem install jekyll -v=<version-num>`, its verison depends on **Gemfile.lock** in your project
 * install ruby-bundler: `sudo gem install bundler`
-* run in your project dir: `jekyll serve`
+* run in your project dir: `jekyll serve` or `bundle exec jekyll serve`
 * update **Gemfile**: delete **Gemfile.lock** and `bundle install`
 
 ## Add-ons
