@@ -8,92 +8,176 @@ tags: []
 
 [TOC]
 
-# 最小二乘
+# 最小二乘问题
 
-损失函数
-
-$$
-F(\mathbf{x})=\frac{1}{2} \sum_{i=1}^{m}\left(f_{i}(\mathbf{x})\right)^{2}
-=\frac{1}{2} \mathbf{f}^{\top}(\mathbf{x}) \mathbf{f}(\mathbf{x})
-$$
-
-其中，$f_i$ 是残差函数。
-
-二阶泰勒展开
+**最小二乘问题**，即
 
 $$
-F(\mathrm{x}+\Delta \mathrm{x})=F(\mathrm{x})+\mathrm{J} \Delta \mathrm{x}+\frac{1}{2} \Delta \mathrm{x}^{\top} \mathrm{H} \Delta \mathrm{x}+O\left(\|\Delta \mathrm{x}\|^{3}\right)
+\min_{\mathbf{x}} \mathbf{F}(\mathbf{x}) = \frac{1}{2} {\|\mathbf{f}(\mathbf{x})\|}^2_2
 $$
 
-忽略泰勒展开的高阶项，损失函数变成了二次函数，可以轻易得到如下性质：
-* 如果在点 $x_s$ 处有导数为0，则称这个点为稳定点
-* 在点 $x_s$ 处对应的 Hessian 为 H
-  - 如果是正定矩阵，即它的特征值都大于 0，则在 $x_s$ 处有 F (x) 为 局部最小值；
-  - 如果是负定矩阵，即它的特征值都小于 0，则在 $x_s$ 处有 F (x) 为 局部最大值；
-  - 如果是不定矩阵，即它的特征值大于 0 也有小于 0 的，则 $x_s$ 处 为鞍点
-
-# 非线性最小二乘
-
-残差函数 $f(x)$ 为非线性函数，对其一阶泰勒近似有
+ 其中，$\mathbf{F}(\mathbf{x})$ 为 **损失函数**，$\mathbf{f}(\mathbf{x})$ 为 **残差函数**，定义为
 
 $$
-\mathbf{f}(\mathbf{x}+\Delta \mathbf{x}) \approx \ell(\Delta \mathbf{x}) \equiv \mathbf{f}(\mathbf{x})+\mathbf{J} \Delta \mathbf{x}
+\mathbf{F}(\mathbf{x})
+= \frac{1}{2} \sum_{i=1}^{m}\left(f_{i}(\mathbf{x})\right)^{2}
+= \frac{1}{2} \mathbf{f}^{\top}(\mathbf{x}) \mathbf{f}(\mathbf{x})
+= \frac{1}{2} {\|\mathbf{f}(\mathbf{x})\|}^2_2
 $$
 
-代入损失函数
+
+* 若 残差函数 $\mathbf{f}(\mathbf{x})$ 为 线性函数，则这个问题即为 **线性最小二乘问题**
+* 若 残差函数 $\mathbf{f}(\mathbf{x})$ 为 非线性函数，则这个问题即为 **非线性最小二乘问题**
+
+
+# 非线性最小二乘问题
+
+对于不方便求解的最小二乘问题，我们用 **迭代** 的方式，从一个初始值出发，不断地更新当前的优化变量，使目标函数下降。这让求解 **导函数为零** 的问题变成了一个不断 **寻找下降增量 $\Delta \mathbf{x}$** 的问题。
+
+## 损失函数 线性化
+
+对 $\mathbf{F}(\mathbf{x})$ 进行线性化，对其进行 **二阶泰勒展开**，得
+
+$$
+\mathbf{F}(\mathbf{x} + \Delta \mathbf{x})
+= \mathbf{F}(\mathbf{x}) + \Delta \mathbf{x}^{\top} \mathbf{F}^{\prime}(\mathbf{x}) + \frac{1}{2} \Delta \mathbf{x}^{\top} \mathbf{F}^{\prime\prime}(\mathbf{x}) \Delta \mathbf{x} + O \left(\|\Delta \mathbf{x}\|^{3}\right)
+$$
+
+记
 
 $$
 \begin{aligned}
-F(\mathrm{x}+\Delta \mathrm{x}) \approx L(\Delta \mathrm{x}) & \equiv \frac{1}{2} \ell(\Delta \mathrm{x})^{\top} \ell(\Delta \mathrm{x}) \\
-&=\frac{1}{2} \mathrm{f}^{\top} \mathrm{f}+\Delta \mathrm{x}^{\top} \mathrm{J}^{\top} \mathrm{f}+\frac{1}{2} \Delta \mathrm{x}^{\top} \mathrm{J}^{\top} \mathrm{J} \Delta \mathrm{x} \\
-&=F(\mathrm{x})+\Delta \mathrm{x}^{\top} \mathrm{J}^{\top} \mathrm{f}+\frac{1}{2} \Delta \mathrm{x}^{\top} \mathrm{J}^{\top} \mathrm{J} \Delta \mathrm{x}
+\mathbf{g} &= \mathbf{F}^{\prime}(\mathbf{x})
+= \mathbf{f}^{\prime}(\mathbf{x})^\top \mathbf{f}(\mathbf{x}) \\
+\mathbf{H} &= \mathbf{F}^{\prime\prime}(\mathbf{x})
 \end{aligned}
 $$
 
-这样损失函数就近似成了一个二次函数，并且如果雅克比是满秩的，则 $\mathbf{J}^{\top} \mathbf{J}$ 正定，损失函数有最小值
+忽略高阶余项，损失函数变成了二次函数，可以轻易得到如下性质：
 
-易得
+* 如果在点 $\mathbf{x}_s$ 处有 $\mathbf{g}_s$ 为 0（对应 $\mathbf{H}_s$），则称这个点为 **驻点（stationary point）**
+  - 如果 $\mathbf{H}_s$ 是正定矩阵，则 $\mathbf{x}_s$ 为 **局部最小值点（local minimizer）**
+  - 如果 $\mathbf{H}_s$ 是负定矩阵，则 $\mathbf{x}_s$ 为 **局部最大值点（local maximizer）**
+  - 如果 $\mathbf{H}_s$ 是不定矩阵，则 $\mathbf{x}_s$ 为 **鞍点（saddle point）**
+
+对于泰勒展开，
+
+* 保留 一阶项，求解方法为 **一阶梯度法**
+* 保留 二阶项，求解方法为 **二阶梯度法**
+
+### 一阶梯度法（最速下降法）
+
+保留 泰勒展开 一阶项
 
 $$
-F^{\prime}(\mathbf{x})=\left(\mathbf{J}^{\top} \mathbf{f}\right)^{\top}
+\mathbf{F}(\mathbf{x} + \Delta \mathbf{x})
+= \mathbf{F}(\mathbf{x}) + \Delta \mathbf{x}^{\top} \mathbf{g}
 $$
 
-$$
-F^{\prime \prime}(\mathbf{x}) \approx \mathbf{J}^{\top} \mathbf{J}
-$$
-
-# 一阶梯度法（最速下降法）
-
-梯度的负方向为最速下降方向
+梯度的负方向为最速下降方向，增量方程 为
 
 $$
-\mathbf{d}=\frac{-\mathbf{J}^{\top}}{\|\mathbf{J}\|}
+\Delta \mathbf{x}_{\mathrm{sd}} = - \mathbf{F}^{\prime}(\mathbf{x}) = - \mathbf{g}
 $$
 
 * 适用于迭代的开始阶段
 * 缺点：最优值附近震荡，收敛慢
 
-# 二阶梯度法（牛顿法）
+### 二阶梯度法（牛顿法）
+
+保留 泰勒展开 二阶项
 
 $$
-\Delta \mathbf{x}=-\mathbf{H}^{-1} \mathbf{J}^{\top}
+\mathbf{F}(\mathbf{x} + \Delta \mathbf{x})
+= \mathbf{F}(\mathbf{x}) + \Delta \mathbf{x}^{\top} \mathbf{g} + \frac{1}{2} \Delta \mathbf{x}^{\top} \mathbf{H} \Delta \mathbf{x}
+$$
+
+求 $\mathbf{F}(\mathbf{x} + \Delta \mathbf{x})$ 关于 $\Delta \mathbf{x}$ 的导数并令其为零，即
+
+$$
+\mathbf{F}^{\prime}(\mathbf{x} + \Delta \mathbf{x}) = 0
+\quad \Longrightarrow \quad
+\mathbf{g} + \mathbf{H} \Delta \mathbf{x} = 0
+\quad \Longrightarrow \quad
+\mathbf{H} \Delta \mathbf{x} = - \mathbf{g}
+$$
+
+则，增量方程 为
+
+$$
+\Delta \mathbf{x}_{\mathrm{n}} = -\mathbf{H}^{-1} \mathbf{g}
 $$
 
 * 适用于最优值附近
-* 缺点：二阶导矩阵计算复杂
+* 缺点：二阶导矩阵 $\mathbf{H}$ 计算复杂
 
-# 高斯-牛顿法
+## 残差函数 线性化
+
+对 $\mathbf{f}(\mathbf{x})$ 进行线性化，对其进行 **一阶泰勒展开**，得
+
+$$
+\mathbf{f}(\mathbf{x}+\Delta \mathbf{x})
+\approx \ell(\Delta \mathbf{x})
+\equiv \mathbf{f}(\mathbf{x}) + \mathbf{J}(\mathbf{x}) \Delta \mathbf{x}
+\quad \text{with} \quad
+\mathbf{J}(\mathbf{x}) = \mathbf{f}^{\prime}(\mathbf{x})
+$$
+
+代入 损失函数
+
+$$
+\begin{aligned}
+\mathbf{F}(\mathbf{x}+\Delta \mathbf{x})
+\approx \mathbf{L}(\Delta \mathbf{x})
+& \equiv \frac{1}{2} \ell(\Delta \mathbf{x})^{\top} \ell(\Delta \mathbf{x}) \\
+&=\frac{1}{2} \mathbf{f}^{\top} \mathbf{f} + \Delta \mathbf{x}^{\top} \mathbf{J}^{\top} \mathbf{f}+\frac{1}{2} \Delta \mathbf{x}^{\top} \mathbf{J}^{\top} \mathbf{J} \Delta \mathbf{x} \\
+&=\mathbf{F}(\mathbf{x}) + \Delta \mathbf{x}^{\top} \mathbf{J}^{\top} \mathbf{f}+\frac{1}{2} \Delta \mathbf{x}^{\top} \mathbf{J}^{\top} \mathbf{J} \Delta \mathbf{x}
+\end{aligned}
+$$
+
+并且
+
+$$
+\begin{aligned}
+\mathbf{g}
+&= \mathbf{F}^{\prime}(\mathbf{x})
+= \mathbf{J}^\top \mathbf{f} \\
+\mathbf{H} &= \mathbf{F}^{\prime\prime}(\mathbf{x}) \approx \mathbf{J}^{\top} \mathbf{J}
+\end{aligned}
+$$
+
+### 高斯-牛顿法（G-N）
+
+求 $\mathbf{L}(\Delta \mathbf{x})$ 关于 $\Delta \mathbf{x}$ 的导数并令其为零，即
+
+$$
+\mathbf{L}^{\prime}(\Delta \mathbf{x}) = 0
+\quad \Longrightarrow \quad
+\mathbf{J}^{\top} \mathbf{f} + \mathbf{J}^{\top} \mathbf{J} \Delta \mathbf{x} = 0
+$$
+
+则，增量方程 为
 
 $$
 \left(\mathbf{J}^{\top} \mathbf{J}\right) \Delta \mathbf{x}_{\mathrm{gn}}=-\mathbf{J}^{\top} \mathbf{f}
 $$
 
-# 列文伯格-马夸尔特法
+简写为
+
+$$
+\mathbf{H} \Delta \mathbf{x}_{\mathrm{gn}} = -\mathbf{g} \quad \text{with} \quad
+\mathbf{H} \approx \mathbf{J}^{\top} \mathbf{J}
+$$
+
+* $\mathbf{J}^{\top} \mathbf{J}$ 可能为奇异矩阵或病态的情况，此时增量的稳定性较差，导致算法不收敛
+
+### 列文伯格-马夸尔特法（L-M）
 
 $$
 \left(\mathbf{J}^{\top} \mathbf{J}+\mu \mathbf{I}\right) \Delta \mathbf{x}_{\operatorname{lm}}=-\mathbf{J}^{\top} \mathbf{f} \quad \text { with } \mu \geq 0
 $$
 
-# DogLeg
+## 鲁棒核函数（M估计）
 
-# 鲁棒核函数
+* Huber
+* Cauchy
