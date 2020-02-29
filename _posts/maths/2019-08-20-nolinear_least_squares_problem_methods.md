@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "非线性优化"
+title:  "非线性最小二乘问题解决方法"
 date:   2019-08-20
 categories: Maths
 tags: []
@@ -10,7 +10,7 @@ tags: []
 
 # 最小二乘问题
 
-**最小二乘问题**，即
+**最小二乘问题（Least Squares Problem）**，即
 
 $$
 \min_{\mathbf{x}} \mathbf{F}(\mathbf{x}) = \frac{1}{2} {\|\mathbf{f}(\mathbf{x})\|}^2_2
