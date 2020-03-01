@@ -242,13 +242,34 @@ So if you've chosen **disptype = CV_16S** during computation, you can access a p
   <img src="../images/stereo_vision/stereo_vision_model_02.png">
 </div>
 
-深度计算公式如下，通过遍历图像可生成 **深度图**
+根据上图相似三角形关系，得
 
 $$
-\begin{aligned}
-	Z = \text{depth} = \frac{f' \cdot B}{d_p} \\
-  d_p = \text{disp}(u,v) + ({c_x}_2' - {c_x}_1')
-\end{aligned}
+\frac{Z}{B} = \frac{Z-f}{B-d_w}
+\quad \Longrightarrow \quad
+Z = \frac{Bf}{d_w}
+$$
+
+其中，$f$ 和 $d_w$ 分别为 成像平面的焦距和视差，单位均为 **物理单位**，将其转换为 **像素单位**，上式写为
+
+$$
+Z = \frac{B f'}{d_p}
+$$
+
+其中，
+
+$$
+d_p = (O_r - u_r) + (u_l - O_l) = (u_l - u_r) + (O_r - O_l)
+$$
+
+
+
+最终，深度计算公式如下，通过遍历图像可生成 **深度图**
+
+$$
+Z = \text{depth} = \frac{B \cdot f'}{d_p}
+\quad \text{with} \quad
+d_p = \text{disp}(u,v) + ({c_x}_2' - {c_x}_1')
 $$
 
 根据 **小孔成像模型**，已知 $Z$ 和 **相机内参** 可计算出 三维点坐标，从而可生成 **三维点云**
