@@ -128,7 +128,8 @@ $$
 由于对于一个特定的像素点，$\mathbf{p}$ 是关于 $\boldsymbol{\xi}$ 的常量，所以
 
 $$
-\mathbf{J}_0 = \frac{\partial \mathbf{p}'}{\partial \mathbf{p}'} = 1
+\mathbf{J}_0 = \frac{\partial \mathbf{p}'}{\partial \mathbf{p}'} = \mathbf{I}
+\in \mathbb{R}^{2 \times 2}
 $$
 
 ## $J_1$
@@ -161,7 +162,7 @@ $$
 所以
 
 $$
-\mathbf{J}_1 = \begin{bmatrix} f_x & 0 \\ 0   & f_y \end{bmatrix}
+\mathbf{J}_1 = \begin{bmatrix} f_x & 0 \\ 0   & f_y \end{bmatrix} \in \mathbb{R}^{2 \times 2}
 $$
 
 ## $J_2$
@@ -195,6 +196,7 @@ $$
   1 & 0 & -\frac{X'}{Z'} \\
   0 & 1 & -\frac{Y'}{Z'}
 \end{bmatrix} \cdot \frac{1}{Z'}
+\in \mathbb{R}^{2 \times 3}
 \end{aligned}
 $$
 
@@ -206,7 +208,7 @@ $$
 \mathbf{J}_3
 &= \frac{\partial \mathbf{P'}}{\partial \boldsymbol{\xi}} \\
 &= \frac{\partial (\mathbf{T} \cdot \mathbf{P})}{\partial \boldsymbol{\xi}} \\
-&= \frac{\partial ( exp(\boldsymbol{\xi}^{\wedge}) \mathbf{P}) }{\partial \boldsymbol{\xi}}
+&= \frac{\partial ( \exp(\boldsymbol{\xi}^{\wedge}) \mathbf{P}) }{\partial \boldsymbol{\xi}}
 \end{aligned}
 $$
 
@@ -234,29 +236,29 @@ $$
 \frac{\partial \tilde{\mathbf{P'}}}{\partial \boldsymbol{\xi}}
 &= \frac{\partial (\mathbf{T} \cdot \tilde{\mathbf{P}})}{\partial \boldsymbol{\xi}} \\
 &=
-\frac{\partial ( exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}} ) }{\partial \delta \boldsymbol{\xi}} \quad \text{(左扰动模型)} \\
+\frac{\partial ( \exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}} ) }{\partial \delta \boldsymbol{\xi}} \quad \text{(左扰动模型)} \\
 &=
 \lim_{\delta \boldsymbol{\xi} \rightarrow 0}
 \frac
 {
-exp(\delta \boldsymbol{\xi}^{\wedge}) exp(\boldsymbol{\xi}^{\wedge})
+\exp(\delta \boldsymbol{\xi}^{\wedge}) \exp(\boldsymbol{\xi}^{\wedge})
 \tilde{\mathbf{P}} -
-exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}}
+\exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}}
 }
 { \delta \boldsymbol{\xi} } \\
 &\approx
 \lim_{\delta \boldsymbol{\xi} \rightarrow 0}
 \frac
 {
-(\mathbf{I}+ \delta \boldsymbol{\xi}^{\wedge}) exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}} -
-exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}}
+(\mathbf{I}+ \delta \boldsymbol{\xi}^{\wedge}) \exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}} -
+\exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}}
 }
 { \delta \boldsymbol{\xi} } \\
 &=
 \lim_{\delta \boldsymbol{\xi} \rightarrow 0}
 \frac
 {
-  \delta \boldsymbol{\xi}^{\wedge} exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}}
+  \delta \boldsymbol{\xi}^{\wedge} \exp(\boldsymbol{\xi}^{\wedge}) \tilde{\mathbf{P}}
 }
 { \delta \boldsymbol{\xi} } \\
 &=
@@ -299,12 +301,20 @@ $$
 所以
 
 $$
-\mathbf{J}_3 =
+\begin{aligned}
+\mathbf{J}_3
+&=
+\begin{bmatrix}
+\mathbf{I} & -\mathbf{P}'^{\wedge}
+\end{bmatrix} \\
+&=
 \begin{bmatrix}
   1 & 0 & 0 &   0  &  Z' &  -Y' \\
   0 & 1 & 0 & -Z' &   0  &   X' \\
   0 & 0 & 1 &  Y' & -X' &    0
 \end{bmatrix}
+\in \mathbb{R}^{3 \times 6}
+\end{aligned}
 $$
 
 注意：
@@ -344,6 +354,7 @@ $$
 \mathbf{J}(\boldsymbol{\xi})
 &= \mathbf{J}_0 \cdot \mathbf{J}_1 \cdot \mathbf{J}_2 \cdot \mathbf{J}_3 \\
 &=
+\mathbf{I} \cdot
 \begin{bmatrix} f_x & 0 \\ 0   & f_y \end{bmatrix} \cdot
 \begin{bmatrix}
   1 & 0 & -\frac{X'}{Z'} \\
