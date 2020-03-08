@@ -214,10 +214,10 @@ int main(int argc, char** argv) {
 
 下面以 **基于李代数的视觉SLAM位姿优化问题** 为例，介绍 Ceres Solver 的使用。
 
-（1）残差（观测值-预测值）
+（1）残差（预测值 - 观测值）
 
 $$
-r(\xi) = u - K \exp({\xi}^{\wedge}) P
+r(\xi) = K \exp({\xi}^{\wedge}) P - u
 $$
 
 （2）雅克比矩阵
@@ -265,41 +265,37 @@ public:
         double fx = 520.9, fy = 521.0, cx = 325.1, cy = 249.7;
         K << fx, 0, cx, 0, fy, cy, 0, 0, 1;
 
-        Eigen::Vector2d residual =  observed_p_ - (K * Pc).hnormalized();
+        Eigen::Vector2d residual =  (K * Pc).hnormalized() - observed_p_;
 
         residuals[0] = residual[0];
         residuals[1] = residual[1];
 
         if(jacobians != NULL) {
 
-            Eigen::Matrix<double, 2, 6> J;
+            if(jacobians[0] != NULL) {
 
-            double x = Pc[0];
-            double y = Pc[1];
-            double z = Pc[2];
+                Eigen::Map<Eigen::Matrix<double, 2, 6, Eigen::RowMajor>> J(jacobians[0]);
 
-            double x2 = x*x;
-            double y2 = y*y;
-            double z2 = z*z;
+                double x = Pc[0];
+                double y = Pc[1];
+                double z = Pc[2];
 
-            J(0,0) = -fx/z;
-            J(0,1) =  0;
-            J(0,2) =  fx*x/z2;
-            J(0,3) =  fx*x*y/z2;
-            J(0,4) = -fx-fx*x2/z2;
-            J(0,5) =  fx*y/z;
-            J(1,0) =  0;
-            J(1,1) = -fy/z;
-            J(1,2) =  fy*y/z2;
-            J(1,3) =  fy+fy*y2/z2;
-            J(1,4) = -fy*x*y/z2;
-            J(1,5) = -fy*x/z;
+                double x2 = x*x;
+                double y2 = y*y;
+                double z2 = z*z;
 
-            int k=0;
-            for(int i=0; i<2; ++i) {
-                for(int j=0; j<6; ++j) {
-                    jacobians[0][k++] = J(i,j);
-                }
+                J(0,0) =  fx/z;
+                J(0,1) =  0;
+                J(0,2) = -fx*x/z2;
+                J(0,3) = -fx*x*y/z2;
+                J(0,4) =  fx+fx*x2/z2;
+                J(0,5) = -fx*y/z;
+                J(1,0) =  0;
+                J(1,1) =  fy/z;
+                J(1,2) = -fy*y/z2;
+                J(1,3) = -fy-fy*y2/z2;
+                J(1,4) =  fy*x*y/z2;
+                J(1,5) =  fy*x/z;
             }
         }
 
