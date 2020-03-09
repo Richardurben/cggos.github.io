@@ -65,31 +65,31 @@ y = f \cdot \frac{Y_c}{Z_c}
 \end{cases}
 $$
 
-**像素坐标系** 和 **成像平面坐标系** 之间，相差一个缩放和平移
+**像素坐标系** 和 **成像平面坐标系** 之间，相差一个缩放和平移，联合上式整理得
 
 $$
 \begin{cases}
 u = \alpha \cdot x + c_x \\[2ex]
 v = \beta   \cdot y + c_y
 \end{cases}
-\text{或}
+\quad \Longrightarrow \quad
 \begin{cases}
-u =  \frac{x}{dx} + c_x \\[2ex]
-v =  \frac{y}{dy} + c_y
+u = \alpha f \cdot \frac{X_c}{Z_c} + c_x \\[2ex]
+v = \beta  f \cdot \frac{Y_c }{Z_c} + c_y
 \end{cases}
 $$
 
-整理，得
+或
 
 $$
 \begin{cases}
-u = \alpha f \frac{X_c}{Z_c} + c_x \\[2ex]
-v = \beta   f \frac{Y_c }{Z_c} + c_y
+u =  \frac{1}{dx} \cdot x + c_x \\[2ex]
+v =  \frac{1}{dy} \cdot y + c_y
 \end{cases}
-\text{或}
+\quad \Longrightarrow \quad
 \begin{cases}
-u = \frac{f}{dx} \frac{X_c}{Z_c} + c_x \\[2ex]
-v = \frac{f}{dy} \frac{Y_c }{Z_c} + c_y
+u = \frac{f}{dx} \cdot \frac{X_c}{Z_c} + c_x \\[2ex]
+v = \frac{f}{dy} \cdot \frac{Y_c }{Z_c} + c_y
 \end{cases}
 $$
 
@@ -97,36 +97,36 @@ $$
 
 $$
 \begin{cases}
-f_x = \frac{f}{dx}\\[2ex]
-f_y = \frac{f}{dy}
-\end{cases}
-\text{，}
-\begin{cases}
 dx = \frac{W_{sensor}}{W_{image}}\\[2ex]
 dy = \frac{H_{sensor}}{H_{image}}
 \end{cases}
-\text{，}
+$$
+
+则
+
+$$
 \begin{cases}
-f_{normal\_x} = \frac{f}{W_{sensor}}\\[2ex]
-f_{normal\_y} = \frac{f}{H_{sensor}}
+f_x = \frac{f}{dx}\\[2ex]
+f_y = \frac{f}{dy}
 \end{cases}
-$$
-
-以$f_x$、$f_y$的方式表示为
-
-$$
+\quad \Longrightarrow \quad
 \begin{cases}
 u = f_x \frac{X_c}{Z_c} + c_x \\[2ex]
 v = f_y \frac{Y_c }{Z_c} + c_y
 \end{cases}
 $$
 
-或 以$f_{normal\_x}$、$f_{normal\_y}$的方式表示为
+或
 
 $$
 \begin{cases}
-u = f_{normal\_x} W_{image} \frac{X_c}{Z_c} + c_x \\[2ex]
-v = f_{normal\_y} H_{image} \frac{Y_c }{Z_c} + c_y
+f_{nx} = \frac{f}{W_{sensor}}\\[2ex]
+f_{ny} = \frac{f}{H_{sensor}}
+\end{cases}
+\quad \Longrightarrow \quad
+\begin{cases}
+u = f_{nx} W_{image} \frac{X_c}{Z_c} + c_x \\[2ex]
+v = f_{ny} H_{image} \frac{Y_c }{Z_c} + c_y
 \end{cases}
 $$
 
@@ -136,7 +136,7 @@ $$
 *  $\alpha$、$\beta$ 的单位为像素/米;
 *  $dx$、$dy$ 为传感器x轴和y轴上单位像素的尺寸大小，单位为米/像素;
 *  $f_x$、$f_y$ 为x、y方向的焦距，单位为像素;
-* $f_{normal\_x}$、$f_{normal\_y}$ 为x、y方向的归一化焦距;
+* $f_{nx}$、$f_{ny}$ 为x、y方向的归一化焦距;
 *  $(c_x,c_y)$ 为主点，图像的中心，单位为像素。  
 
 最终，写成矩阵的形式为：
@@ -152,7 +152,7 @@ f_x&0&c_x\\0&f_y&c_y\\0&0&1
 \end{aligned}
 $$
 
-按照传统的习惯将$Z_c$移到左侧
+或
 
 $$
 \begin{aligned}
@@ -171,7 +171,7 @@ $$
 
 透镜的畸变主要分为径向畸变和切向畸变。  
 
-**径向畸变** 是由于透镜形状的制造工艺导致，且越向透镜边缘移动径向畸变越严重，实际情况中我们常用r=0处的泰勒级数展开的前几项来近似描述径向畸变，矫正径向畸变前后的坐标关系为：
+**径向畸变** 是由于透镜形状的制造工艺导致，且越向透镜边缘移动径向畸变越严重，实际情况中我们常用r=0处的泰勒级数展开的前几项来近似描述径向畸变，径向畸变后的归一化坐标为：
 
 $$
 \begin{cases}
@@ -180,7 +180,7 @@ y_{distorted} = y (1+k_1r^2+k_2r^4+k_3r^6)
 \end{cases}
 $$
 
-**切向畸变** 是由于透镜和CMOS或者CCD的安装位置误差导致，切向畸变需要两个额外的畸变参数来描述，矫正前后的坐标关系为：
+**切向畸变** 是由于透镜和CMOS或者CCD的安装位置误差导致，切向畸变需要两个额外的畸变参数来描述，切向畸变后的归一化坐标为：
 
 $$
 \begin{cases}
@@ -203,6 +203,10 @@ $$
 综上，我们一共需要5个畸变参数 $(k_1, k_2, k_3, p_1, p_2)$ 来描述透镜畸变。
 
 ## 畸变矫正
+
+<div align=center>
+  <img src="../images/camera_model/img_undistort.jpg">
+</div>
 
 * [[图像]畸变校正详解](https://blog.csdn.net/humanking7/article/details/45037239)
 * 核心示例代码 (from [here](https://github.com/cggos/cgocv/blob/master/cv_core/include/cgocv/image.h#L153-L179))
