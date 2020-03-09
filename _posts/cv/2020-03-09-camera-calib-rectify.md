@@ -3,7 +3,7 @@ layout: post
 title:  "相机标定与矫正"
 date:   2020-03-09
 categories: ComputerVision
-tags: [Image Process]
+tags: [Camera Calib]
 ---
 
 [TOC]
