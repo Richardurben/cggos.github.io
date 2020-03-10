@@ -8,6 +8,20 @@ tags: [Stereo Vision, 3D Reconstruction]
 
 [TOC]
 
+# 极线搜索
+
+<div align=center>
+  <img src="../images/epipolar_geometry/epiline_search.jpg">
+</div>
+
+If we are using only the left camera, we can't find the 3D point corresponding to the point $x$ in image because every point on the line $OX$ projects to the same point on the image plane. But consider the right image also. Now different points on the line $OX$ projects to different points ( $x^{\prime}$) in right plane. So with these two images, we can triangulate the correct 3D point.
+
+The projection of the different points on $OX$ form a line on right plane (line $l^{\prime}$). We call it **epiline** corresponding to the point $x$. It means, to find the point $x$ on the right image, **search along this epiline**. It should be somewhere on this line (Think of it this way, to find the matching point in other image, you need not search the whole image, just search along the epiline. So it provides better performance and accuracy). This is called **Epipolar Constraint**. Similarly all points will have its corresponding epilines in the other image.
+
+* **epiline**: $l$, $l^{\prime}$
+* **epipole**: $e$, $e^{\prime}$
+* **epipolar plane**: $XOO^{\prime}$
+
 # 求解空间点坐标
 
 ## Triangulate in ORB-SLAM2
