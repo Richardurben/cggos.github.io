@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "图像分析之图像特征点及匹配"
+title:  "图像分析之图像特征"
 date:   2019-01-13
 categories: ComputerVision
 tags: [Image Process]
@@ -8,7 +8,7 @@ tags: [Image Process]
 
 [TOC]
 
-# Image Corners
+# Overview
 
 Types of Image Feature:
 
@@ -19,6 +19,19 @@ Types of Image Feature:
 <div align=center>
   <img src="../images/image_features/image_features.png">
 </div>
+
+# Image Corners/Keypoints
+
+Keypoints Structure (from OpenCV):
+
+* **pt**: x & y coordinates of the keypoint
+* **size**: keypoint diameter
+* **angle**: keypoint orientation
+* **response**: keypoint detector response on the keypoint (that is, strength of the keypoint)
+* **octave**: pyramid octave in which the keypoint has been detected
+* **class_id**: object id
+
+> feature detector + feature descriptor
 
 ## Harris
 
@@ -178,9 +191,9 @@ In 2006, three people, Bay, H., Tuytelaars, T. and Van Gool, L, published anothe
 
 SURF算法在积分图像上使用了盒子滤波器对二阶微分模板进行了简化，从而构建了Hessian矩阵元素值，进而缩短了特征提取的时间，提高了效率。
 
-## BRIEF
+## BRIEF Descriptor
 
-* Binary Robust Independent Elementary Features
+* BRIEF: Binary Robust Independent Elementary Features
 
 在特征点周围邻域内选取若干个像素点对，通过对这些点对的灰度值比较，将比较的结果组合成一个二进制串字符串用来描述特征点。最后，使用汉明距离来计算在特征描述子是否匹配。
 
@@ -203,33 +216,27 @@ ORB is basically a fusion of **FAST keypoint detector** and **BRIEF descriptor**
 * **multiscale**
   * **use pyramid to produce multiscale-features**
 
-* **rotation invariance** (Orientation)
-  * It computes the intensity weighted centroid of the patch with located corner at center. The direction of the **vector** from this corner point to centroid gives the orientation. To improve the rotation invariance, **moments** are computed with x and y which should be in a circular region of radius r, where r is the size of the patch.
+* **rotation invariance** (Orientation): It computes the intensity weighted centroid of the patch with located corner at center. The direction of the **vector** from this corner point to centroid gives the orientation. To improve the rotation invariance, **moments** are computed with x and y which should be in a circular region of radius r, where r is the size of the patch. 旋转部分计算如下：
+
+  - 在一个小的图像块 B 中,定义 **图像块的一阶矩** 为:
+    $$
+    M_{pq} = \sum_{x,y \in B} x^p y^q I(x,y), \quad p,q \in \{ 0,1\}
+    $$
+
+  - 通过矩找到图像块的质心:
+  $$
+  C = \bigg( \frac{M_{10}}{M_{00}}, \frac{M_{01}}{M_{00}} \bigg)
+  $$
+
+  - 几何中心 $O$ 与 质心 $C$ 连接得到 **方向向量$\vec{OC}$**，于是特征点的方向定义为：
+  $$
+  \theta = arctan( \frac{M_{01}}{M_{10}} )
+  $$
 
 ### rotated BRIEF
 
 * Binary Robust Independent Elementary Features
 
-
-旋转部分计算：
-
-* 在一个小的图像块 B 中,定义 **图像块的一阶矩** 为:
-
-$$
-M_{pq} = \sum_{x,y \in B} x^p y^q I(x,y), \quad p,q \in \{ 0,1\}
-$$
-
-* 通过矩找到图像块的质心:
-
-$$
-C = \bigg( \frac{M_{10}}{M_{00}}, \frac{M_{01}}{M_{00}} \bigg)
-$$
-
-* 几何中心 $O$ 与 质心 $C$ 连接得到 **方向向量$\vec{OC}$**，于是特征点的方向定义为：
-
-$$
-\theta = arctan( \frac{M_{01}}{M_{10}} )
-$$
 
 
 ## FREAK
@@ -253,7 +260,7 @@ $$
 <\nabla \mathbf{I}(\mathbf{p}_i), \mathbf{q} - \mathbf{p}_i> = 0
 $$
 
-# 图像金字塔
+## 图像金字塔
 
 use pyramid to produce **multiscale-features**
 
@@ -265,44 +272,15 @@ use pyramid to produce **multiscale-features**
 * 高斯金字塔：向下降采样图像(4层)，高斯核5*5
 * 拉普拉斯金字塔
 
-# Feature Matching
 
-## 相似度
+# Image Edges
 
-* SSD (Sum of Squared Distance)
+## Line
 
-$$
-{D(I_A,I_B)}_{SSD} = \sum_{x,y}[{I_A}(x,y)-{I_B}(x,y)]^2
-$$
+* 正交表示
+* 普吕克坐标表示
 
-* SAD (Sum of Absolute Difference)
 
-$$
-{D(I_A,I_B)}_{SAD} = \sum_{x,y} | {I_A}(x,y)-{I_B}(x,y) |
-$$
+# Image Blobs
 
-* NCC (Normalized Cross Correlation)
-
-$$
-{D(I_A,I_B)}_{NCC} =
-\frac
-{ \sum_{x,y} {I_A}(x,y) {I_B}(x,y) }
-{ \sqrt { \sum_{x,y} {I_A}(x,y)^2 \sum_{x,y} {I_B}(x,y)^2 } }
-$$
-
-* 去均值 版本
-
-## 块匹配
-
-* 假设图像I1和图像I2，分别对应的角点为p1i和p2j，在图像I2角点中找到与图像I1对应的角点；
-* 以角点p1i为中心，在图像I1中提取9*9的像素块作为模板图像T1i；
-* 在图像I2中p1i点周围(以角点p1i为中心20*20的像素 范围)查找所有的角点p2jm(m<=n,n为该范围内角点数)；
-* 遍历所有的角点p2jm，以角点p2jm为中心，在图像I2中提取9*9的像素块，计算该像素块与T1i的SSD；
-* SSD最小对应的角点p2jm，即为图像I2中与图像I1中角点p1i对应的匹配角点；
-* 循环执行以上5步，查找图像I2中与图像I1对应的所有匹配角点；
-
-## 描述子匹配
-
-### Brute-Force
-
-### FLANN
+## Planar
