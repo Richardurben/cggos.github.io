@@ -268,7 +268,13 @@ $$
 简写为
 
 $$
-A \begin{bmatrix} u  \\ v   \end{bmatrix} = -b
+J \begin{bmatrix} u  \\ v   \end{bmatrix} = -e
+$$
+
+计算
+
+$$
+J^T J \begin{bmatrix} u  \\ v   \end{bmatrix} = - J^T e
 $$
 
 从而得到图像间的运动速度或者某块像素的位置。

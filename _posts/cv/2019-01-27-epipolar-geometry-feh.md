@@ -24,6 +24,12 @@ Basic Epipolar Geometry entities for **pinhole cameras** and **panoramic camera*
   <img src="../images/epipolar_geometry/epipolar_geometry_pinhole.jpg"> <img src="../images/epipolar_geometry/epipolar_geometry_panoramic.jpg">
 </div>
 
+* Fundamental Matrix F
+  - maps a point in one image to a line (epiline) in the other image
+  - Calculated from matching points from both the images. A minimum of 8 such points are required to find the fundamental matrix (while using 8-point algorithm). More points are preferred and use RANSAC to get a more robust result.
+* Essential Matrix E
+* Homography Matrix H
+
 # Foundamental Matrix (基本矩阵)
 
 $$
@@ -39,8 +45,15 @@ $$
 $\mathbf{F}$ 的性质：
 
 * 对其乘以 **任意非零常数**，对极约束依然满足（尺度等价性，up to scale）
-* 具有 **7个自由度**： 9-2
+
+* 具有 **7个自由度**
+  - F has seven degrees of freedom: a 3×3 homogeneous matrix has eight indepen-
+dent ratios (there are nine elements, and the common scaling is not significant);
+however, F also satisfies the constraint det F = 0 which removes one degree of
+freedom.
+
 * 奇异性约束 $\text{rank}(\mathbf{F})=2$
+  - The fundamental matrix F may be written as $F = [e^\prime]_\times H_\pi$ , where $H_\pi$ is the transfer mapping from one image to another via any plane π. Furthermore, since $[e^\prime]_\times$ has rank 2 and $H_\pi$ rank 3, $F$ is a matrix of rank 2.
 
 $\mathbf{F}$ 与 极线和极点 的关系：
 
@@ -78,7 +91,11 @@ $\mathbf{E}$ 的性质：
 
 * 对其乘以 **任意非零常数**，对极约束依然满足（尺度等价性，up to scale）
 * 根据 $\mathbf{E} = \mathbf{t}^\wedge \mathbf{R}$，$\mathbf{E}$ 的奇异值必定是 $[\sigma, \sigma, 0]^T$ 的形式
-* 具有 **5个自由度**：平移旋转共6个自由度 + 尺度等价性
+* 具有 **5个自由度**：平移旋转共6个自由度 - 尺度等价性
+  - The essential matrix, E = [t] × R, has only five degrees of freedom: both the rotation
+matrix R and the translation t have three degrees of freedom, but there is an overall
+scale ambiguity – like the fundamental matrix, the essential matrix is a homogeneous
+quantity.
 * 奇异性约束 $\text{rank}(\mathbf{E})=2$（因为 $\text{rank}(\mathbf{t^\wedge})=2$）
 
 $\mathbf{E}$ 与 极线和极点 的关系：
@@ -199,42 +216,47 @@ The four possible solutions for calibrated reconstruction from E
   <img src="../images/epipolar_geometry/four_solutions_E.jpg">
 </div>
 
-Suppose that the SVD of E is $U \text{diag}(1, 1, 0) V^T$, there are (**ignoring signs**) two possible factorizations $E = t^\wedge R = SR$ as follows
+Suppose that the SVD of $E$ is
 
 $$
-t^\wedge = S = UZU^T \\[2ex]
-R_1 = UWV^T \quad or \quad R_2 = UW^TV^T
+\text{SVD}(E) = U \text{diag}(1, 1, 0) V^T
+$$
+
+there are (**ignoring signs**) two possible factorizations $E = t^\wedge R = SR$ as follows
+
+$$
+\begin{aligned}
+t^\wedge &= UZU^T \quad or \quad U(-Z)U^T \\[2ex]
+R &= UWV^T \quad or \quad UW^TV^T
+\end{aligned}
 $$
 
 where
 
 $$
-W =
+\begin{aligned}
+W &=
 \begin{bmatrix}
 0 & -1 & 0 \\
 1 &  0 & 0 \\
 0 &  0 & 1
 \end{bmatrix}
-\quad \text{and} \quad
-Z =
+= R_z(\frac{\pi}{2}) \\[3ex]
+Z &=
 \begin{bmatrix}
  0 & 1 & 0 \\
 -1 &  0 & 0 \\
  0 &  0 & 0
 \end{bmatrix}
-$$
-
-and
-
-$$
-\begin{aligned}
- W &\approx R_z(\frac{\pi}{2}) \\[2ex]
- Z &= W^T \cdot \text{diag}(1, 1, 0) \\[2ex]
--Z &= W   \cdot \text{diag}(1, 1, 0)
+= \text{diag}(1, 1, 0) \cdot W
 \end{aligned}
 $$
 
-Rt恢复示例代码 [e2rt.cpp](https://github.com/cggos/cgocv/blob/master/epipolar_geometry/e2rt/e2rt.cpp)：
+* $W$ is orthogonal
+* $Z$ is skew-symmetric
+* also we can get $t$ with $t = U(0,0,1)^T = \mathbf{u}_3$, the last column of $U$
+
+Rt恢复示例代码 [e2rt.cpp](https://github.com/cggos/slam_park_cg/blob/master/pose_estimation/e2rt.cpp)：
 
 ```c++
 Matrix3d E;

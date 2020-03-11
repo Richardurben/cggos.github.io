@@ -315,18 +315,28 @@ $$
 \begin{bmatrix} Z_2 \\ Z_1 \end{bmatrix} = \boldsymbol{t}
 $$
 
-## Triangulate in SVO
-
-上式即 $Ax=b$ 的形式，解该方程可以用 **正规方程**
+或
 
 $$
-A^T A x = A^T b
+\begin{bmatrix}
+\boldsymbol{R} \boldsymbol{p}_1 & -\boldsymbol{p}_2
+\end{bmatrix}
+\cdot
+\begin{bmatrix} Z_1 \\ Z_2 \end{bmatrix} = - \boldsymbol{t}
+$$
+
+## Triangulate in SVO
+
+上式即 $Ax=-t$ 的形式，解该方程可以用 **正规方程**
+
+$$
+A^T A x = - A^T t
 $$
 
 解得
 
 $$
-x = (A^TA)^{-1} A^T b
+x = - (A^TA)^{-1} A^T t
 $$
 
 [svo_cg中示例代码](https://github.com/cggos/svo_cg/blob/master/svo/src/matcher.cpp#L109-L122)：  
