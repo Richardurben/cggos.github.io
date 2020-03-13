@@ -12,6 +12,12 @@ tags: [SensorFusion]
 
 * 代码：[sensor_fusion_cg/fusion_lidar_radar](https://github.com/cggos/sensor_fusion_cg/tree/master/fusion_lidar_radar)
 
+## System State Vector
+
+$$
+x = [p_x, p_y, v_x, v_y]^T \in \mathbb{R}^{4 \times 1}
+$$
+
 ## State Transition & Measurement Function
 
 State transition function:
@@ -43,37 +49,56 @@ $$
 **State Prediction**:
 
 $$
-{x^{\prime}=F x + Bu + \nu}
-$$
-
-$$
-P^{\prime}=F P F^{T}+Q
+\begin{aligned}
+x^{\prime}_k &= F x_{k-1} + \nu_k, \quad u = 0 \\
+P^{\prime}_k &= F P_{k-1} F^{T} + Q_k
+\end{aligned}
 $$
 
 **Measurement Update**:
 
 $$
-y=z-H x^{\prime}
+y_k = z_k - H x^{\prime}_k
 $$
 
 $$
-S=H P^{\prime} H^{T}+R
+S = H P^{\prime}_k H^{T}+R
 $$
 
 $$
-K=P^{\prime} H^{T} S^{-1}
+K = P^{\prime}_k H^{T} S^{-1}
 $$
 
 $$
-x=x^{\prime}+K y
+\begin{aligned}
+x_k &= x^{\prime}_k + K y_k \\
+P_k &= (I-K H) P^{\prime}_k
+\end{aligned}
 $$
 
-$$
-P=(I-K H) P^{\prime}
-$$
+# EKF Fusion Process
+
+<div align=center>
+  <img src="../images/sensor_fusion/fusion_lidar_radar_ekf.jpg"/>
+</div>
 
 
-# Prediction
+## Initialization
+
+* system state vector dimension: $n = 4$
+* timestep: $t_0$
+* system state vector: $x_0 \in \mathbb{R}^{4 \times 1}$
+* process covariance matrix: $P_0$
+* system state transition matrix: $F_0 = I_{4 \times 4}$
+* process noise covariance matrix: $Q_0 = 0_{4 \times 4}$
+
+## Prediction
+
+当前时间戳与上一测量数据时间戳的偏移（timeoffset）
+
+$$
+\Delta t = t_k - t_{k-1}
+$$
 
 状态转移方程
 
@@ -125,7 +150,7 @@ $$
 v \sim N(0, Q)
 $$
 
-## State Transition Matrix
+### State Transition Matrix
 
 $$
 F =
@@ -137,7 +162,7 @@ F =
 \end{array}\right)
 $$
 
-## Process Noise Covariance Matrix
+### Process Noise Covariance Matrix
 
 由上式
 
@@ -208,7 +233,7 @@ Q = G Q_{\nu} G^{T} =
 \end{array}\right)
 $$
 
-# Measurement Update
+## Measurement Update
 
 测量方程
 
@@ -216,7 +241,7 @@ $$
 z = h(x^{\prime}) + \omega
 $$
 
-## Lidar Measurements
+### Lidar Measurements
 
 Lidar测量方程
 
@@ -259,7 +284,11 @@ R = E\left[\omega \omega^{T}\right] =
 \end{array}\right)
 $$
 
-## Radar Measurements
+### Radar Measurements
+
+<div align=center>
+  <img src="../images/sensor_fusion/radar_measurement.jpg"/>
+</div>
 
 Radar测量方程
 
@@ -321,6 +350,8 @@ R =
 {0} & {0} & {\sigma_{\dot{\rho}}^{2}}
 \end{array}\right)
 $$
+
+R 表示了测量值的不确定度，一般由传感器的厂家提供
 
 # Reference
 
