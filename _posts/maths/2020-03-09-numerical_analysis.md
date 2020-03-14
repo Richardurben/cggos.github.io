@@ -12,6 +12,7 @@ tags: []
 
 $$
 \mathbf{I}_\mathrm{dst}(i, j) =
+\mathbf{I}_\mathrm{src}(u^{\prime}, v^{\prime}) =
 \mathbf{I}_\mathrm{src}(u, v)
 $$
 
@@ -40,7 +41,8 @@ case INTERPOLATION_NEAREST: {
 
 $$
 \mathbf{I}_\mathrm{dst}(i, j) =
-\mathbf{I}_\mathrm{src}(u^{\prime}+\alpha, v^{\prime}+\beta)
+\mathbf{I}_\mathrm{src}(u^{\prime}, v^{\prime}) =
+\mathbf{I}_\mathrm{src}(u+\alpha, v+\beta)
 $$
 
 with
