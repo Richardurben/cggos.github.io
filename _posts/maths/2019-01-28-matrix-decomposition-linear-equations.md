@@ -10,21 +10,24 @@ tags: [Matrix, Least-squares Minimization]
 
 # Matrix
 
-## 特殊矩阵
+## 正规矩阵
 
-* **正规矩阵** $A^H A = A A^H$
-  * 酉矩阵 $A^H A = A A^H = I$
-    * 正交矩阵 $A^T A = AA^T = I$
-      * 特殊正交矩阵：$\det(A) = +1$，是一个旋转矩阵
-      * 瑕旋转矩阵：$\det(A) = -1$，瑕旋转是旋转加上镜射
-  * 厄米特矩阵 $A^H = A$
-    * 实对称矩阵 $A^T = A$
-  * 反厄米特矩阵 $A^H = -A$
-    * 实反对称矩阵 $A^T = -A$
-* **对角阵**：任意正规矩阵 都可以经过 正交变换 变成 对角矩阵
-* **上（下）三角阵**
-* **可逆矩阵（非奇异矩阵）**
-* **正定阵**
+$$
+A^H A = A A^H
+$$
+
+* 酉矩阵 $A^H A = A A^H = I$
+  * 正交矩阵 $A^T A = AA^T = I$
+    * 特殊正交矩阵：$\det(A) = +1$，是一个旋转矩阵
+      * Givens矩阵：$G(i,j,\theta)$
+    * 瑕旋转矩阵：$\det(A) = -1$，瑕旋转是旋转加上镜射
+      * Householder矩阵：$H = I - 2 uu^T$
+
+* 厄米特矩阵 $A^H = A$
+  * 实对称矩阵 $A^T = A$
+
+* 反厄米特矩阵 $A^H = -A$
+  * 实反对称矩阵 $A^T = -A$
 
 
 ## 正定与半正定矩阵
@@ -56,6 +59,82 @@ $$
   * 若A的特征值均为正数，则A是正定的；若A的特征值均为负数，则A为负定的。
 * 计算A的各阶顺序主子式
   * 若A的各阶顺序主子式均大于零，则A是正定的；若A的各阶顺序主子式中，奇数阶主子式为负，偶数阶为正，则A为负定的。
+
+
+## 其他
+
+* **对角阵**：任意正规矩阵 都可以经过 正交变换 变成 对角矩阵
+* **上（下）三角阵**
+* **可逆矩阵（非奇异矩阵）**
+
+
+## 矩阵变换
+
+### 正交变换
+
+### 吉文斯旋转（Givens rotation）
+
+在数值线性代数中，吉文斯旋转（Givens rotation）是在两个坐标轴所展开的平面中的旋转。
+
+吉文斯旋转 矩阵：
+$$
+G(i, j, \theta)=\left[\begin{array}{ccccccc}
+1 & \cdots & 0 & \cdots & 0 & \cdots & 0 \\
+\vdots & \ddots & \vdots & & \vdots & & \vdots \\
+0 & \cdots & c & \cdots & s & \cdots & 0 \\
+\vdots & & \vdots & \ddots & \vdots & & \vdots \\
+0 & \cdots & -s & \cdots & c & \cdots & 0 \\
+\vdots & & \vdots & & \vdots & \ddots & \vdots \\
+0 & \cdots & 0 & \cdots & 0 & \cdots & 1
+\end{array}\right]
+$$
+
+当一个吉文斯旋转矩阵 G(i,j,θ)从左侧乘另一个矩阵 A 的时候，GA 只作用于 A 的第 i 和 j 行。
+
+$$
+\left[\begin{array}{cc}
+c & -s \\
+s & c
+\end{array}\right]\left[\begin{array}{l}
+a \\
+b
+\end{array}\right]=\left[\begin{array}{l}
+r \\
+0
+\end{array}\right]
+$$
+
+明确计算出 θ 是没有必要的。我们转而直接获取 c, s 和 r。一个明显的解是
+
+$$
+\begin{aligned}
+&r \leftarrow \sqrt{a^{2}+b^{2}}\\
+&c \leftarrow a / r\\
+&s \leftarrow-b / r
+\end{aligned}
+$$
+
+Givens 旋转在数值线性代数中主要的用途是在向量或矩阵中介入零。例如，这种效果可用于计算矩阵的 QR分解。超过Householder变换的一个好处是它们可以轻易的并行化，另一个好处是对于非常稀疏的矩阵计算量更小。
+
+### Householder 变换
+
+豪斯霍尔德变换（Householder transformation）或译“豪斯霍德转换”，又称初等反射（Elementary reflection），这一变换将一个向量变换为由一个超平面反射的镜像，是一种线性变换。其变换矩阵被称作豪斯霍尔德矩阵，在一般内积空间中的类比被称作豪斯霍尔德算子。超平面的法向量被称作豪斯霍尔德向量。
+
+<div align=center>
+  <img src="../images/maths/householder_reflection.jpg">
+</div>
+
+豪斯霍尔德变换可以将向量的某些元素置零，同时保持该向量的范数不变。例如，将非零列向量 $\mathbf{x}=\left[x_{1}, \dots, x_{n}\right]^{T}$ 变换为单位基向量 $\mathbf{e}=[1,0, \ldots, 0]^{T}$ 的豪斯霍尔德矩阵为
+
+$$
+\mathbf{H}=\mathbf{I}-\frac{2}{\langle\mathbf{v}, \mathbf{v}\rangle} \mathbf{v} \mathbf{v}^{H}
+$$
+
+其中豪斯霍尔德向量 $\mathbf{v}$ 满足：
+
+$$
+\mathbf{v}=\mathbf{x}+\operatorname{sgn}\left(\mathbf{x}_{1}\right)\|\mathbf{x}\|_{2} \mathbf{e}_{1}
+$$
 
 # Matrix Decomposition
 

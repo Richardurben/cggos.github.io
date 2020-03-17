@@ -54,6 +54,8 @@ $$
 
 ## 描述子匹配
 
+Brute Force匹配和FLANN匹配是opencv二维特征点匹配常见的两种办法，分别对应BFMatcher（cv::BFMatcher）和FlannBasedMatcher（cv::FlannBasedMatcher）。
+
 ### Brute-Force
 
 ### FLANN
